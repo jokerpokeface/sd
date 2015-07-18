@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!-- 基础页面，不用于显示，用于定义基本公用部分的框架，给子页面继承使用 -->
+    <meta charset  ="utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+	<!-- Bootstrap core CSS -->
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+
+        .nav .panel {
+            margin-bottom: 0px;
+        }
+        .panel .panel-heading {
+            cursor: pointer;
+        }
+        .panel .panel-body {
+            display: none;
+        }
+    </style>
+    {% block extendJS %}{% endblock %}
+    {% block extendCSS %}{% endblock %}
+</head>
+<body>
+    {% block header %}
+        <!-- 添加顶部导航路径信息 -->
+    {% endblock %}
+    <div id="body" class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                {% block content %}
+                    <!-- 添加左边内容显示块 -->
+                {% endblock %}
+            </div>
+            <div class="col-sm-3 col-sm-offset-1 nav">
+                <div class="right-scroll-nav">
+                    <div class="page-header">
+                    </div>
+                    {% for course in courses %}
+                    
+                    <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">{{course.name}}</div>
+                        <!-- List group -->
+                        <div class="panel-body">
+                          <ul class="list-group list-unstyled">
+                            <li><a class="list-group-item" href="/teacherInform/{{course.name}}">通知</a></li>
+                            <li><a class="list-group-item" href="/teacherHomework/{{course.name}}">作业</a></li>
+                            <li><a class="list-group-item" href="/teacherDiscuss/{{course.name}}">讨论区</a></li>
+                            <li><a class="list-group-item" href="/teacherCourseProspect/{{course.name}}">课程前景</a></li>
+                            <li><a class="list-group-item" href="/teacherUploadFile/{{course.name}}">教学资料</a></li>
+                            <li><a class="list-group-item" href="/teacherAddStudent/{{course.name}}">添加学生</a></li>
+                          </ul>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% block addRightNav %}
+                        <!-- 添加额外的导航条 -->
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block footer %}
+        <!-- 底部块添加 -->
+    {% endblock %}
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        // 导航条缩放功能
+        $('.panel-heading').each(function(i){
+            $(this).on('click',function(){
+                $(this).next().toggle(300,'linear');
+            })
+        })
+    </script>
+    {% block endJS %}
+    {% endblock %}
+</body>
+</html>
