@@ -1,0 +1,1 @@
+python cocos.py new HelloCpp -p com.coco2dx.org -l cpp -d ~/Desktop
