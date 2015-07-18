@@ -1,0 +1,203 @@
+<!-- 教师发布和批改作业页面 -->
+{% extends "base.html" %}
+{% block title %}TeacherManage{% endblock %}
+{% block extendCSS %}
+<style type="text/css">
+			/*遮罩层*/
+			.shadow #dark{
+			             display : none;
+			            position : fixed;
+			                 top : 0%;  left: 0%;  
+			               width : 100%;  
+			              height : 100%;
+			    background-color : black;
+			             z-index :1001;
+			        -moz-opacity : 0.7;
+			             opacity :.70;
+			              filter : alpha(opacity=70);
+			}
+			.shadow #show{
+			      	     display : none;
+			            position : fixed;
+
+					         top : 20%;
+					        left : 10%;
+					       width : 80%;	
+			    		  height : 60%;
+			    
+			    		  margin :auto;
+			             padding : 10px 10px;
+			    
+			    background-color : white;
+			             z-index : 1002;
+			    	    overflow : auto;
+			            overflow : hidden;
+			}
+</style>
+{% endblock %}
+{% block header %}
+	<header>
+		<ol class="breadcrumb">
+			  <li><a href="/">课程网站名称</a></li>
+			  <li><a href="/index1">管理</a></li>
+			  <li><a href="#">课程名称：课程作业</a></li>
+		</ol>
+	</header>
+{%endblock%}
+{% block content %}
+	<div>
+		<div class="page-header">
+			<h2>作业</h2>
+		</div>
+		<ul id="myTabe" class="nav nav-tabs">
+				<li role="presentation" class="active">
+					<a href="#setHomework" data-toggle="tab">作业设置</a>
+				</li>
+				<li role="presentation">
+					<a href="#gradeHomework" data-toggle="tab">作业批改</a>
+				</li>
+		</ul>
+		<!-- 显示作业内容和发布作业 -->
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="setHomework">
+				<form action = "/teacherHomework/{{coursename}}/{{homeworks1.id}}/upHomeworkfile" method = 'POST' enctype="multipart/form-data">
+					<div class="form-group">
+						<label><h3>题目</h3></label>
+						<input type="text" class="form-control" name = "title">
+					</div>
+					<div class="form-group">
+						<label><h3>内容</h3></label>
+						<textarea class="form-control" rows="3" name = "content"></textarea>
+					</div>
+				  	<div class="form-group">
+				    	<label><h3>文件上传</h3></label>
+				    	<input type="file" id="exampleInputFile" name = "file">
+				  	</div>
+				  	<button type="submit" class="btn btn-default">保存</button>
+			  	</form>
+			</div>
+			<!-- 显示学生名单和提交的作业，进行批改 -->
+			<div class="tab-pane fade" id="gradeHomework">
+							<table class="table table-striped">
+								{% for student in students %}			
+								<thead>
+									<tr>
+										<th>姓名</th>
+										<th>作业</th>
+										<th>分数</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+									<tr>
+										<th>{{student.name}}</th>
+										<th>{{homeworks1.name}}</th>
+										<th>{% for comment in comments %}
+											{% if comment.student == student.name %}
+											{% if comment.homework == homeworks1 %}
+											{{comment.grade}}
+											{% endif %}
+											{% endif %}
+											{% endfor %}</th>
+									</tr>
+									<tr>
+										<td colspan="3" class="bg-success">
+											<div>
+											<h4>作业提交内容</h4>
+											<div>
+												{% for hcontent in hcontents %}
+												{{hcontent.content}}
+												{% endfor %}
+											</div>
+											<form action = "/teacherHomework/{{coursename}}/{{homeworks1.id}}/{{student.name}}/submit" method = 'POST'>		
+												<div class="form-group">
+													<label><h4>分数</h4></label>
+													<input type="text" class="form-control" name = "grade">
+												</div>
+							  					<div class="form-group">
+													<label><h4>评语</h4></label>
+													<textarea class="form-control" rows="3" name = "comment"></textarea>
+												</div>
+												<input type = "submit" name = "{{homework.name}}"/>
+											</form>
+											</div>
+										</td>
+									</tr>		
+								</tbody>
+								{% endfor %}
+							</table>
+						</div>					
+		</div>
+	</div>
+	<div class="shadow">
+	    <div id="dark">
+	    </div>
+	    <div id="show">
+			<form class="form-horizontal" action="/teacherHomework/{{coursename}}/add" method="post">
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label">Name</label>
+			    <div class="col-sm-10">
+			      <input type="text" class="form-control" placeholder="作业名称"
+			      name = "name">
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label">题目</label>
+			    <div class="col-sm-10">
+			      <input type="text" class="form-control" id="inputPassword3" placeholder="title" name = "title">
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="col-sm-2 control-label">内容</label>
+			    <div class="col-sm-10">
+			      <textarea class="form-control" placeholder = "content"
+			       name = "content"></textarea>
+			    </div>
+			  </div>
+
+			  <div class="form-group">
+			    <div class="col-sm-offset-2 col-sm-10">
+			      <button type="submit" class="btn btn-default choose">确定</button>
+			      <button class="btn btn-default cancel">取消</button>
+			    </div>
+			  </div>
+			</form>
+	    </div>
+    </div>
+{% endblock %}
+{% block addRightNav %}
+	<div>
+		<div class="page-header">
+			<h2>作业</h2>
+		</div>
+		<div class="listgroup">
+			<ul>
+				{% for homework in homeworks %}
+				<li><a href="/teacherHomework/{{coursename}}/{{homework.id}}">{{homework.name}}</a></li>
+				{% endfor %}
+				<a class="list-group-item" id="addHomework" href="#">添加作业</a>
+			</ul>
+		</div>
+	</div>
+{% endblock %}
+{% block endJS %}
+<script type="text/javascript">
+// 添加课程
+$("#addHomework").on("click", function(){
+	$("#dark").show();
+	$("#show").show();
+});
+$(".shadow").on("click", "#choose", function(){
+	$("#dark").show();
+	$("#show").show();
+});
+$(".shadow").on("click", "#cancel", function(){
+	$("#dark").show();
+	$("#show").show();
+});
+$('#myTab a').click(function (e) {
+ e.preventDefault()
+ $(this).tab('show')
+})
+</script>
+{% endblock %}

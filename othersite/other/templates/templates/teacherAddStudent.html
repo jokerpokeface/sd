@@ -1,0 +1,32 @@
+<!-- 批量注册学生页面 -->
+{% extends "base.html" %}
+{% block title %}TeacherManage{% endblock %}
+{% block header %}
+	<header>
+		<ol class="breadcrumb">
+			  <li><a href="/">课程网站名称</a></li>
+			  <li><a href="/index1">管理</a></li>
+			  <li><a href="#">课程名称：批量注册学生</a></li>
+		</ol>
+		<meta charset  ="utf-8"/>
+	</header>
+{% endblock %}
+{% block content %}
+	<div class="page-header">
+		<h2>批量注册学生</h2>
+	</div>
+	
+	<!--<form enctype="multipart/form-data" method="POST" action = "upload">
+		<div class="form-group" >
+			<h3>选择文件上传</h3>
+			<input type="file" name = "file">
+		</div>
+			<button type="submit" class="btn btn-default pull-right">提交</button>
+	</form>-->
+	<form method = 'POST' action = "/teacherAddStudent/{{coursename}}/register">
+		<p>username:<input type = "text" name = "username"></p>
+		<p>password:<input type = "text" name = "password"></p>
+		<p>name:<input type = "text" name = "name"></p>
+		<input type = "submit">
+	</form>
+{% endblock %}

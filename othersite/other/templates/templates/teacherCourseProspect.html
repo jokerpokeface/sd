@@ -1,0 +1,29 @@
+<!-- 教师课程前景设置 -->
+{% extends "base.html" %}
+{% block title %}TeacherManage{% endblock %}
+{% block header %}
+	<header>
+		<ol class="breadcrumb">
+			  <li><a href="/">课程网站名称</a></li>
+			  <li><a href="/index1">管理</a></li>
+			  <li><a href="#">课程名称：课程前景</a></li>
+		</ol>
+		<meta charset  ="utf-8"/>
+	</header>
+{% endblock %}
+{% block content %}
+	<div class="page-header">
+		<h2>课程前景</h2>
+	</div>
+	<form action = "{{coursename}}" method = "post">
+					<div class="form-group">
+						<h3>简介及前景</h3>
+						<textarea class="form-control" type = "text" name = "pro"></textarea>
+					</div>
+					<div class="form-group">
+						<h3>书目推荐</h3>
+						<textarea class="form-control" type = "text" name = "books"></textarea>
+					</div>
+					<button type="submit" class="btn btn-default pull-right" name = "{{coursename}}">保存</button>			
+				</form>
+{% endblock %}

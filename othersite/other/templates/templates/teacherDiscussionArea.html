@@ -1,0 +1,92 @@
+<!-- 讨论区域 -->
+{% extends "base.html" %}
+{% block title %}TeacherManage{% endblock %}
+{% block extendCSS %}
+	<style type="text/css">
+		/*评论区样式*/
+		.comments{
+			margin: 10px 0 0;
+		}
+			.author {
+				font-size: 20px;
+				font-weight: bold;
+			}
+			.text {
+			  color: gray;
+			  font-size: 15px;
+			  padding-left: 50px;
+			}
+		/*回复字体样式*/
+	    .pull-right {
+			display: none;
+		}
+		    .panel:hover .pull-right {
+				display: block;
+			}
+	</style>
+{% endblock %}
+{% block header %}
+	<header>
+		<ol class="breadcrumb">
+			  <li><a href="/">课程网站名称</a></li>
+			  <li><a href="/index1">管理</a></li>
+			  <li><a href="#">课程名称：课程讨论区</a></li>
+		</ol>
+		<meta charset  ="utf-8"/>
+	</header>
+{%endblock%}
+{% block content %}
+	<div>
+		<nav>
+			<div class="page-header">
+				<h2>讨论区</h2>
+			</div>
+			<ul id="myTabe" class="nav nav-tabs">
+				<li role="presentation" class="active">
+					<a href="#waitAnswer" data-toggle="tab">
+						未回复
+					</a>
+				</li>
+			</ul>
+
+			<div id="myTabContent" class="tab-content">
+							<div id="waitAnswer" class="tab-pane fade in active">
+								<div class="comments">
+									{% for problem in problems %}
+										{% if problem.state == 0 %}
+										<div class="comment panel panel-info">
+											<div class="panel-heading">
+												<div class="pull-right">回复</div>
+												<div class="author">{{problem.fromStu}}</div>
+												<div class="text">
+													{{problem.content}}
+												</div>
+											</div>
+											<div class="panel-body">
+												<form action = "{{problem.id}}" method = "POST">
+													<div class="form-group">
+														<textarea class="form-control" name = "answer"></textarea>
+													</div>
+													<button type="submit" class="btn btn-default" >回复</button>
+													<button class="btn btn-default">取消</button>
+												</form>
+											</div>
+										</div>
+										{% endif %}	
+									{% endfor %}			
+									</div>
+								</div>
+							</div>
+			</div>
+		</nav>
+	</div>
+{% endblock %}
+{% block endJS %}
+<script type="text/javascript">
+// nav 模块事件监听绑定
+$('#myTab a').click(function (e) {
+ e.preventDefault()
+ $(this).tab('show')
+})
+</script>
+{% endblock %}

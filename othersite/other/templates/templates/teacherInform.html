@@ -1,0 +1,45 @@
+<!-- 教师更新通知页面 -->
+{% extends "base.html" %}
+{% block title %}TeacherManage{% endblock %}
+{% block header %}
+	<header>
+		<ol class="breadcrumb">
+			  <li><a href="/">课程网站名称</a></li>
+			  <li><a href="/index1">管理</a></li>
+			  <li><a href="#">课程名称：课程通知</a></li>
+		</ol>
+		<meta charset  ="utf-8"/>
+	</header>
+{%endblock%}
+{% block extendCSS %}
+	<style type="text/css">
+		form {
+			margin-bottom: 20px;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	<div>
+		<div class="page-header">
+			<h2>{{coursename}}课程通知</h2>
+		</div>
+		<!-- 发布新的通知 -->
+		<form action = "{{coursename}}" method = "post">
+			<div class="form-group">
+				<textarea class="form-control" rows="3" type = "text" name = "content" value = "{{content}}"></textarea>
+			</div>
+			<button class="btn btn-default" type="submit" name = "{{coursename}}">更新通知</button>
+		</form>
+		<!-- 显示之前的通知 -->
+		<div>
+			{% for post in posts %}
+			<blockquote class="blockquote">
+			  	<p>
+			  		{{post.body}}
+				</p>
+			</blockquote>
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock %}

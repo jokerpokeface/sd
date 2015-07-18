@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Student Log In</title>
+
+		<link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+		<style type="text/css">
+			input {
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<ol class="breadcrumb">
+			  <li><a href="/login">课程网站名称</a></li>
+			  <li><a href="/index">课程名称</a></li>
+			  <li><a href="#">作业</a></li>
+			</ol>
+		</header>
+
+		<div id="body" class="container">
+			<div class="row">
+				<div class="col-sm-8">
+					<div id="homework">
+						<div class="page-header">
+							<h2>作业内容</h2>
+						</div>
+						<div class="jumbotron">
+							<h2>作业题目：{{homework.title}}</h2>
+							<p>作业内容：{{homework.content}}</p>
+						</div>
+						
+						<div class="page-header">
+							<h2>作业状态：</h2>
+						</div>
+						<table class="table table-bordered">
+							<tbody>
+								<tr>
+									<td>截止时间</td>
+									<td>{{homework.pubDate}}</td>
+								</tr>
+								<tr>
+									<td>提交状态{{homework.state}}</td>
+									<td>{% if homework.state == 0 %}
+										<p>批改中</p>
+										{% elif homework.state == 1 %}
+										<p>未上交</p>
+										{% elif homework.state == 2 %}
+										<p>已经批改。分数:{{homework.grade}}评价：{{homework.comment}}</p>
+										{% else %}
+										<p>作业已过期，请联系老师</p>
+										{% endif %}
+									</td>
+								</tr>
+								<tr>
+									<td>作业分数</td>
+									<td>
+										{% if homework.state == 2 %}
+										{% for comment in comments %}
+										{% if comment.homework == homework %}
+										{{comment.grade}}
+										{% endif %}
+										{% endfor %}
+										{% else %}
+										<p>无</p>
+										{% endif %}
+									</td>
+								</tr>
+								
+								<tr>
+									<td>作业提交</td>
+									<td>
+										<form action = "/courses/homework/{{coursename}}/{{homework.id}}/upload" method = "POST">
+											<textarea type = "text" name = "content" rows="10" cols = "50">
+											</textarea>
+											<button type="submit"  name = "{{homework.name}}">提交</button>
+										</form>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</body>
+</html> 

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>{{coursename}}</title>
+		<link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+		<style type="text/css">
+			.container h2 {
+				font-weight : bold;
+			}
+			.author {
+				  font-size: 25px;
+				font-weight: bold;
+			}
+			.text {
+			         color: gray;
+			     font-size: 20px;
+			  padding-left: 50px;
+			}
+			.scroll {
+				    height: 25rem;
+				overflow-y: auto;
+			}
+			#addTable {
+				      text-align : center;
+
+				          margin :10px auto;
+				           width : 100%;
+
+				background-color : gray;
+				          cursor : pointer;
+			}
+				#addTable:hover .panel-heading {
+					background-color : #ffe2ff
+				}
+				#addTable a {
+					color : white;
+				}
+
+			.coursetable a {
+				       color : white;
+				       float : right;
+				margin-right : 4px; 
+			}
+				.coursetable .selectClass {
+					cursor : pointer;
+				}
+				.coursetable .selectClass:hover {
+					background-color : #ffe2ff
+				}
+			
+			/*为锚点增加高度*/
+			a.anchor {
+				display : inline-block;
+				 height : 5px;
+			}
+			/*遮罩层*/
+			.shadow #dark{
+			             display : none;
+			            position : fixed;
+			                 top : 0%;  left: 0%;  
+			               width : 100%;  
+			              height : 100%;
+			    background-color : black;
+			             z-index :1001;
+			        -moz-opacity : 0.7;
+			             opacity :.70;
+			              filter : alpha(opacity=70);
+			}
+			.shadow #show{
+			      	     display : none;
+			            position : fixed;
+
+					         top : 25%;
+					        left : 5%;
+					       width : 80%;
+			    		  height : 65%;
+			    
+			    		  margin :auto;
+			             padding : 0 10px;
+			    
+			    background-color : white;
+			             z-index : 1002;
+			    	    overflow : auto;
+			            overflow : hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<ol class="breadcrumb">
+			  <li><a href="/login">课程网站名称</a></li>
+			  <li><a href="#">{{coursename}}</a></li>
+			</ol>
+		</header>
+
+		<div id="body" class="container">
+			<!-- this is body -->
+			<div class="row">
+				<div class="col-sm-8">
+					<div class="block">
+						<a name="inform"></a>
+						<div class="page-header">
+							<h2>告知板</h2>
+						</div>
+						<div>
+							<div class="well scroll">
+								{% for post in posts %}
+								<ul>
+									<li>{{post.body}}</li>
+								</ul>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+					<div name="homework" class="block">
+						<a name="homework" class="anchor"></a>
+						<div class="page-header">
+							<h2>课程作业</h2>
+						</div>
+						<div>
+							<div class="well scroll">
+								{% for homework in homeworks %}
+									<a href="/courses/homework/{{coursename}}/{{homework.id}}">{{homework.name}}</a>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+					<div name="courseProspect" class="block">
+						<a name="courseProspect" class="anchor"></a>
+						<div class="page-header">
+							<h2>课程前景</h2>
+						</div>
+						<div class="well scroll">
+							<h3>简介|前景</h3>
+							{% for prospect in prospects %}
+								<ul>
+									<li>{{prospect.pro}}</li>
+								</ul>
+							{% endfor %}
+
+							<h3>推荐书目</h3>
+							{% for prospect in prospects %}
+								<ul>
+									<li>{{prospect.books}}</li>
+								</ul>
+							{% endfor %}
+						</div>
+					</div>
+					<div name="discussionArea" class="block">
+						<a name="discussionArea" class="anchor"></a>
+						<div class="page-header">
+							<h2>讨论区</h2>
+						</div>
+						<div id="comments">
+							<div class = "scroll">
+							{% for problem in problems %}
+								{% ifequal problem.state 0 %}
+								<div class="comment">
+									<div class="author">{{problem.fromStu}}</div>
+									<div class="text">{{problem.content}}</div>
+								</div>
+								{% else %}
+
+								<div class="comment">
+									<div class="author">{{problem.fromStu}}</div>
+									<div class="text">{{problem.content}}</div>
+									{% for answer in answers %}
+									{% ifequal answer.problem.id  problem.id %}
+									<div class="author">{{answer.fromTea}}回复</div>
+									<div class="text">{{answer.content}}</div>
+									{% endifequal %}
+									{% endfor %}
+								</div>
+								{% endifequal %}
+							{% endfor %}
+							</div>
+							<div class="addComments">
+								<form action = "/courses/{{coursename}}/sdiscuss" method = "POST">
+									<div class="newtext form-group">
+										<textarea class="form-control" name = "content" type = "text" value ="{{content}}">
+											
+										</textarea>
+									</div>
+									<input type ="submit" class="btn btn-default" name = "sdiscuss">
+								</form>
+							</div>
+						</div>
+					</div>
+					<div name="courseSchedule" class="block">
+						<a name="courseSchedule" class="anchor"></a>
+						<div class="page-header">
+							<h2>蹭课表</h2>
+						</div>
+						<div id="coursetables">
+							<div id="addTable" class="panel panel-primary" >
+								<div class="panel-heading">
+									<a href="#">+</a>
+								</div>
+
+							</div>
+							<div class="coursetable panel panel-primary">
+								<div class="panel-heading">
+									课表1
+									<a class="editTable">编辑</a>
+									<a href="#">删除</a>
+
+								</div>
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<td>星期</td>
+											<td>第1节</td>
+											<td>第2节</td>
+											<td>第3节</td>
+											<td>第4节</td>
+											<td>第5节</td>
+											<td>第6节</td>
+										<tr>
+										<tr>
+											<td>时间</td>
+											<td>08:00-08:45</td>
+											<td>08:00-08:45</td>
+											<td>08:00-08:45</td>
+											<td>08:00-08:45</td>
+											<td>08:00-08:45</td>
+											<td>08:00-08:45</td>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>周一</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+										</tr>
+										<tr>
+											<td>周二</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+										</tr>
+										<tr>
+											<td>周三</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+										</tr>
+										<tr>
+											<td>周四</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+										</tr>
+										<tr>
+											<td>周五</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+										</tr>
+										<tr>
+											<td>周六</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+										</tr>
+										<tr>
+											<td>周日</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+											<td>课程：程序设计|地点：实验楼112</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3 col-sm-offset-1">
+					<div class="page-header">
+						<h2>导航</h2>
+					</div>
+					<div class="list-group">
+						<a href="#inform" class="list-group-item">告知板</a>
+						<a href="#homework" class="list-group-item">课程作业</a>
+						<a href="#courseProspect" class="list-group-item">课程前景</a>
+						<a href="#discussionArea" class="list-group-item">讨论区</a>
+						<a href="#courseSchedule" class="list-group-item">蹭课表</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	    <div class="shadow">
+		    <div id="dark">
+		    </div>
+		    <div id="show">
+		      	<div id="radioList">
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+					    Option one is this and that&mdash;be sure to include why it's great
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+					    Option two can be something else and selecting it will deselect option one
+					  </label>
+					</div>
+				</div>
+				<button type="button" id="choose" class="btn btn-default">确定</button>
+				<button type="button" id="cancel" class="btn btn-default">取消</button>
+		    </div>
+	    </div>
+		<footer>
+			
+		</footer>
+	</body>
+		<!-- Bootstrap core JavaScript
+	    ================================================== -->
+	    <!-- Placed at the end of the document so the pages load faster -->
+	    <script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
+	    <script src="http://cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+		(function() {
+			// --------------让导航条随着页面的滚动而滚动到适当的位置--------------------
+			var navTop = $('.col-sm-3').css('top');
+			navTop = Number(navTop.substring(0,navTop.indexOf('p')));
+			window.onscroll = function(){
+				// 前者适合chrome，后者适合ff
+				var top = document.documentElement.scrollTop 
+					|| document.body.scrollTop;
+				// $('.col-sm-3').css('top', navTop+top+'px');
+				$('.col-sm-3').stop().animate({'top':navTop+top+'px'},300);
+			};
+			// -------------------------------导航滚动结束--------------------------------
+
+
+			// ---------------------------------选择课程----------------------------------
+
+			// 捏造数据
+			var allClass = [
+				[//周一的课
+					["软件工程改进", "程序设计", "数据库"],//周一第一节所有的课
+					["软件工程改进", "程序设计", "数据库"],//周一第二节所有的课
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+				],
+				[//周二的课
+					["软件工程改进", "程序设计", "数据库"],//周二第一节所有的课
+					["软件工程改进", "程序设计", "数据库"],//周二第二节所有的课
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+				],
+				[//周仨的课
+					["软件工程改进", "程序设计", "数据库"],//周仨第一节所有的课
+					["软件工程改进", "程序设计", "数据库"],//周仨第二节所有的课
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+				],
+				[//周四的课
+					["软件工程改进", "程序设计", "数据库"],//周四第一节所有的课
+					["软件工程改进", "程序设计", "数据库"],//周四第二节所有的课
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],	
+				],
+				[//周五的课
+					["软件工程改进", "程序设计", "数据库"],//周五第一节所有的课
+					["软件工程改进", "程序设计", "数据库"],//周五第二节所有的课
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+				],
+				[//周六的课
+					["软件工程改进", "程序设计", "数据库"],//周六第一节所有的课
+					["软件工程改进", "程序设计", "数据库"],//周六第二节所有的课
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+				],
+				[//周日的课
+					["软件工程改进", "程序设计", "数据库"],//周日第一节所有的课
+					["软件工程改进", "程序设计", "数据库"],//周日第二节所有的课
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+					["软件工程改进", "程序设计", "数据库"],
+				]
+			]
+			// 
+			$("#coursetables").on("click", ".editTable", function(){
+				var $trs = $(this).parent().next().find("tbody tr"),
+					i = 0,
+					len = $trs.length
+					;
+				for (i = 0; i < len; i++) {
+					$trs.eq(i).find("td:not(:first)").addClass("selectClass");
+				}
+				$(this).addClass("saveTable").text("保存");
+
+
+			})
+			$("#coursetables").on("click", ".saveTable", function(){
+				// 将当前表格传送给后台
+				// ...
+				var $classes = $(this).parent().parent().find(".selectClass");
+				// 需要获取当前表格的行数和列数
+				var row = 7, col = 6, i, j;
+				var $newForm = $("<form action='{{coursename}}/upload' method='post'></form>");
+				for (i = 0; i < row; i++) {
+					for (j = 0; j < col; j++) {
+						var $newInput = $("<input name='row" + i + "col" + j + "' type='hidden' value='" + $classes.eq(i*j + j).text() + "'>");
+						$newForm.append($newInput);
+					}
+				}
+				$("body").append($newForm);
+				$newForm[0].submit();
+				// 
+				// 
+				var $trs = $(this).parent().next().find("tbody tr"),
+					i = 0,
+					len = $trs.length
+					;
+				for (i = 0; i < len; i++) {
+					$trs.eq(i).find("td:not(:first)").removeClass("selectClass");
+				}
+				$(this).removeClass("saveTable").text("编辑");
+			})
+			// 点击一个单元格，计算是第几行几列，获得对应的课程数组，添加onSelcet类，显示遮罩层，等待选择
+			$("#coursetables").on("click", ".selectClass", function(){
+				var $onTr      = $(this).parent(),
+					rowIndex   = $onTr[0].rowIndex-3,
+					colIndex   = $(this)[0].cellIndex-1,
+					classes    = allClass[rowIndex][colIndex],
+					selectHtml = '',
+					i
+					;
+				console.log(rowIndex + " " + colIndex);
+				for (i = 0, len = classes.length; i < len; i++) {
+					selectHtml += '<div class="radio">'+'<label>'+'<input type="radio" name="optionsRadios" id="radio' + i + '" value='+ classes[i] +'>'+classes[i]+'</label>'+'</div>';
+				}
+				$("#show #radioList").html(selectHtml);
+				$("td").removeClass("onSelect");
+				$(this).addClass("onSelect");
+
+				// 显示遮罩层
+				$("#dark").show();
+				$("#show").show();
+			});
+			// 根据选择更改单元格的课程信息
+			$(".shadow").on("click", "#choose", function(){
+				var radioText = $(".radio.checked").text() || "";
+				$(".onSelect").text(radioText);
+				$("#dark").hide();
+				$("#show").hide();
+			});
+			// 隐藏遮罩层
+			$(".shadow").on("click", "#cancel", function(){
+				$("#dark").hide();
+				$("#show").hide();
+			});
+			// 为选择的课程添加checked类
+			$(".shadow").on("click", ".radio",function(){
+				$(this).addClass("checked").siblings().removeClass("checked");
+			});
+			// 添加课程表函数
+			$("#addTable").on("click", function(){
+				var row = allClass.length,
+					col = allClass[0].length,
+					i = 0,
+					tableHtml = '',
+					Day = ["周一", "周二","周仨", "周四", "周五", "周六", "周日"],
+					$newTableNode
+					;
+
+				tableHtml += 
+					'<div class="coursetable panel panel-primary">'
+						+ '<div class="panel-heading">'
+							+ 'new table'
+							+ '<a class="editTable">编辑</a>'
+							+ '<a href="#">删除</a>'
+						+ '</div>'
+						+ '<table class="table table-bordered">'
+							+ '<thead>'
+								+ '<tr>'
+								+ '	<td>星期</td>'
+								+ '	<td>第1节</td>'
+								+ '	<td>第2节</td>'
+								+ '	<td>第3节</td>'
+								+ '	<td>第4节</td>'
+								+ '	<td>第5节</td>'
+								+ '	<td>第6节</td>'
+								+ '<tr>'
+								+ '<tr>'
+								+ '	<td>时间</td>'
+								+ '	<td>08:00-08:45</td>'
+								+ '	<td>08:00-08:45</td>'
+								+ '	<td>08:00-08:45</td>'
+								+ '	<td>08:00-08:45</td>'
+								+ '	<td>08:00-08:45</td>'
+								+ '	<td>08:00-08:45</td>'
+								+ '</tr>'
+							+ '</thead>'
+							+ '<tbody>';
+				for (i = 0; i < row; i++) {
+					tableHtml += '<tr>';
+					tableHtml += '<td>' + Day[i] + '</td>';
+					for (j = 0; j < col; j++) {
+						tableHtml += '<td></td>';
+					}
+					tableHtml += '</tr>';
+				}
+				tableHtml += '</tbody></table></div>';
+
+				$newTableNode = $(tableHtml);
+				$newTableNode.insertAfter($(this));
+			});
+			//-----------------------------选择课程结束-------------------------------
+		})()
+		</script>
+</html> 
